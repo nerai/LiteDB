@@ -16,7 +16,7 @@ namespace LiteDB
             // get BsonDocument from object
             var doc = _mapper.ToDocument(document);
 
-            return _engine.Value.Update(_name, new BsonDocument[] { doc }) > 0;
+            return _engine.Value.Update(_name, new BsonDocument[] { doc }).Any();
         }
 
         /// <summary>
@@ -33,13 +33,13 @@ namespace LiteDB
             // set document _id using id parameter
             doc["_id"] = id;
 
-            return _engine.Value.Update(_name, new BsonDocument[] { doc }) > 0;
+            return _engine.Value.Update(_name, new BsonDocument[] { doc }).Any();
         }
 
         /// <summary>
         /// Update all documents
         /// </summary>
-        public int Update(IEnumerable<T> documents)
+        public List<BsonDocument> Update (IEnumerable<T> documents)
         {
             if (documents == null) throw new ArgumentNullException("document");
 

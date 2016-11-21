@@ -19,17 +19,17 @@ namespace LiteDB
         /// <summary>
         /// Implement update command to a document inside a collection. Return number of documents updated
         /// </summary>
-        public int Update(string collection, IEnumerable<BsonDocument> docs)
+        public List<BsonDocument> Update (string colName, IEnumerable<BsonDocument> docs)
         {
             if (collection.IsNullOrWhiteSpace()) throw new ArgumentNullException("collection");
             if (docs == null) throw new ArgumentNullException("docs");
 
-            return this.Transaction<int>(collection, false, (col) =>
+            return this.Transaction<List<BsonDocument>>(colName, false, (col) =>
             {
                 // no collection, no updates
-                if (col == null) return 0;
+                if (col == null) return null;
 
-                var count = 0;
+                var updated = new List<BsonDocument> ();
 
                 foreach (var doc in docs)
                 {
@@ -37,11 +37,11 @@ namespace LiteDB
                     {
                         _trans.CheckPoint();
 
-                        count++;
+                        updated.Add(doc);
                     }
                 }
 
-                return count;
+                return updated;
             });
         }
 
